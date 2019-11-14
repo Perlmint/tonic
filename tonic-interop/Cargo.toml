@@ -7,8 +7,7 @@ publish = false
 
 [features]
 default = ["tonic"]
-tls_openssl = ["tonic", "tonic/tls", "tonic/openssl"]
-tls_rustls = ["tonic", "tonic/tls", "tonic/rustls"]
+tls_rustls = ["tonic", "tonic/tls"]
 
 [[bin]]
 name = "client"
