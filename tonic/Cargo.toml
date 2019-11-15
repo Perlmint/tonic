@@ -23,8 +23,8 @@ categories = ["web-programming", "network-programming", "asynchronous"]
 keywords = ["rpc", "grpc", "async", "futures", "protobuf"]
 
 [features]
-default = ["transport", "codegen"]
-codegen = ["async-trait", "prost", "prost-derive"]
+default = ["transport", "codegen", "data-prost"]
+codegen = ["async-trait"]
 transport = [
     "hyper",
     "tokio",
@@ -34,6 +34,7 @@ transport = [
 ]
 tls = ["tokio-rustls"]
 tls-roots = ["rustls-native-certs"]
+data-prost = ["prost", "prost-derive"]
 
 # [[bench]]
 # name = "bench_main"

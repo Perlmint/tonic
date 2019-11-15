@@ -36,5 +36,7 @@ impl std::fmt::Display for Never {
 impl std::error::Error for Never {}
 
 pub use bytes::*;
+#[cfg(feature = "data-prost")]
 pub use prost::*;
+#[cfg(feature = "datta-prost")]
 pub use prost_derive::*;
