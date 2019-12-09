@@ -60,6 +60,8 @@
 use proc_macro2::{Delimiter, Group, Ident, Literal, Punct, Spacing, Span, TokenStream};
 use quote::TokenStreamExt;
 
+#[cfg(feature = "flatbuffers")]
+mod flatbuffers;
 #[cfg(feature = "prost")]
 mod prost;
 mod schema;
@@ -146,6 +148,8 @@ impl Builder {
 
         #[cfg(feature = "prost")]
         prost::compile(self, out_dir.clone(), protos, includes)?;
+        #[cfg(feature = "flatbuffers")]
+        flatbuffers::compile(self, out_dir.clone(), protos, includes)?;
 
         #[cfg(feature = "rustfmt")]
         {

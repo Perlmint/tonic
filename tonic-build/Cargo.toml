@@ -17,15 +17,17 @@ keywords = ["rpc", "grpc", "async", "codegen", "protobuf"]
 
 [dependencies]
 prost-build = { version = "0.5", optional = true }
+flatbuffers-build = { path = "../../flatbuffers-build", optional = true }
 syn = "1.0"
 quote = "1.0"
 proc-macro2 = "1.0"
 
 [features]
-default = ["transport", "rustfmt", "prost"]
+default = ["transport", "rustfmt"]
 rustfmt = []
 transport = []
 prost = ["prost-build"]
+flatbuffers = ["flatbuffers-build"]
 
 [package.metadata.docs.rs]
 all-features = true
