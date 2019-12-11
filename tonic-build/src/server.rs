@@ -7,8 +7,8 @@ use syn::{Ident, Lit, LitStr};
 pub(crate) fn generate<'a, T: Service<'a>>(service: &'a T, context: &T::Context) -> TokenStream {
     let methods = generate_methods(service, context);
 
-    let server_service = quote::format_ident!("{}Server", service.name());
-    let server_trait = quote::format_ident!("{}", service.name());
+    let server_service = format_ident!("{}Server", service.name());
+    let server_trait = format_ident!("{}", service.name());
     let generated_trait = generate_trait(service, context, server_trait.clone());
     let service_doc = generate_doc_comments(service.comment());
 
@@ -94,7 +94,7 @@ fn generate_trait_methods<'a, T: Service<'a>>(service: &'a T, context: &T::Conte
     let mut stream = TokenStream::new();
 
     for method in service.methods() {
-        let name = quote::format_ident!("{}", method.name());
+        let name = format_ident!("{}", method.name());
 
         let (req_message, res_message) = method.request_response_name(context);
 
@@ -120,7 +120,7 @@ fn generate_trait_methods<'a, T: Service<'a>>(service: &'a T, context: &T::Conte
                 }
             }
             (false, true) => {
-                let stream = quote::format_ident!("{}Stream", method.identifier());
+                let stream = format_ident!("{}Stream", method.identifier());
                 let stream_doc = generate_doc_comment(&format!(
                     "Server streaming response type for the {} method.",
                     method.identifier()
@@ -138,7 +138,7 @@ fn generate_trait_methods<'a, T: Service<'a>>(service: &'a T, context: &T::Conte
                 }
             }
             (true, true) => {
-                let stream = quote::format_ident!("{}Stream", method.identifier());
+                let stream = format_ident!("{}Stream", method.identifier());
                 let stream_doc = generate_doc_comment(&format!(
                     "Server streaming response type for the {} method.",
                     method.identifier()
@@ -198,8 +198,8 @@ fn generate_methods<'a, T: Service<'a>>(service: &'a T, context: &T::Context) ->
             method.identifier()
         );
         let method_path = Lit::Str(LitStr::new(&path, Span::call_site()));
-        let ident = quote::format_ident!("{}", method.name());
-        let server_trait = quote::format_ident!("{}", service.name());
+        let ident = format_ident!("{}", method.name());
+        let server_trait = format_ident!("{}", service.name());
 
         let method_stream = match (method.client_streaming(), method.server_streaming()) {
             (false, false) => generate_unary(method, ident, context, server_trait),
@@ -233,7 +233,7 @@ fn generate_unary<'a, T: Method<'a>>(
 ) -> TokenStream {
     let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
 
-    let service_ident = quote::format_ident!("{}Svc", method.identifier());
+    let service_ident = format_ident!("{}Svc", method.identifier());
 
     let (request, response) = method.request_response_name(context);
 
@@ -274,11 +274,11 @@ fn generate_server_streaming<'a, T: Method<'a>>(
 ) -> TokenStream {
     let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
 
-    let service_ident = quote::format_ident!("{}Svc", method.identifier());
+    let service_ident = format_ident!("{}Svc", method.identifier());
 
     let (request, response) = method.request_response_name(context);
 
-    let response_stream = quote::format_ident!("{}Stream", method.identifier());
+    let response_stream = format_ident!("{}Stream", method.identifier());
 
     quote! {
         struct #service_ident<T: #server_trait >(pub Arc<T>);
@@ -317,7 +317,7 @@ fn generate_client_streaming<'a, T: Method<'a>>(
     context: &T::Context,
     server_trait: Ident,
 ) -> TokenStream {
-    let service_ident = quote::format_ident!("{}Svc", method.identifier());
+    let service_ident = format_ident!("{}Svc", method.identifier());
 
     let (request, response) = method.request_response_name(context);
     let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
@@ -361,11 +361,11 @@ fn generate_streaming<'a, T: Method<'a>>(
 ) -> TokenStream {
     let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
 
-    let service_ident = quote::format_ident!("{}Svc", method.identifier());
+    let service_ident = format_ident!("{}Svc", method.identifier());
 
     let (request, response) = method.request_response_name(context);
 
-    let response_stream = quote::format_ident!("{}Stream", method.identifier());
+    let response_stream = format_ident!("{}Stream", method.identifier());
 
     quote! {
         struct #service_ident<T: #server_trait>(pub Arc<T>);
