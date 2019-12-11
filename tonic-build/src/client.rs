@@ -104,7 +104,7 @@ fn generate_unary<'a, T: Method<'a>>(
     context: &T::Context,
     path: String,
 ) -> TokenStream {
-    let codec_name = format_ident!("{}", T::Context::CODEC_NAME);
+    let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
     let ident = format_ident!("{}", method.name());
     let (request, response) = method.request_response_name(context);
 
@@ -114,7 +114,7 @@ fn generate_unary<'a, T: Method<'a>>(
             request: impl tonic::IntoRequest<#request>,
         ) -> Result<tonic::Response<#response>, tonic::Status> {
            self.ready().await?;
-           let codec = tonic::codec::#codec_name::default();
+           let codec = #codec_name::default();
            let path = http::uri::PathAndQuery::from_static(#path);
            self.inner.unary(request.into_request(), path, codec).await
         }
@@ -126,7 +126,7 @@ fn generate_server_streaming<'a, T: Method<'a>>(
     context: &T::Context,
     path: String,
 ) -> TokenStream {
-    let codec_name = format_ident!("{}", T::Context::CODEC_NAME);
+    let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
     let ident = format_ident!("{}", method.name());
 
     let (request, response) = method.request_response_name(context);
@@ -137,7 +137,7 @@ fn generate_server_streaming<'a, T: Method<'a>>(
             request: impl tonic::IntoRequest<#request>,
         ) -> Result<tonic::Response<tonic::codec::Streaming<#response>>, tonic::Status> {
            self.ready().await?;
-           let codec = tonic::codec::#codec_name::default();
+           let codec = #codec_name::default();
            let path = http::uri::PathAndQuery::from_static(#path);
            self.inner.server_streaming(request.into_request(), path, codec).await
         }
@@ -149,7 +149,7 @@ fn generate_client_streaming<'a, T: Method<'a>>(
     context: &T::Context,
     path: String,
 ) -> TokenStream {
-    let codec_name = format_ident!("{}", T::Context::CODEC_NAME);
+    let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
     let ident = format_ident!("{}", method.name());
 
     let (request, response) = method.request_response_name(context);
@@ -160,7 +160,7 @@ fn generate_client_streaming<'a, T: Method<'a>>(
             request: impl tonic::IntoStreamingRequest<Message = #request>
         ) -> Result<tonic::Response<#response>, tonic::Status> {
            self.ready().await?;
-           let codec = tonic::codec::#codec_name::default();
+           let codec = #codec_name::default();
            let path = http::uri::PathAndQuery::from_static(#path);
            self.inner.client_streaming(request.into_streaming_request(), path, codec).await
         }
@@ -172,7 +172,7 @@ fn generate_streaming<'a, T: Method<'a>>(
     context: &T::Context,
     path: String,
 ) -> TokenStream {
-    let codec_name = format_ident!("{}", T::Context::CODEC_NAME);
+    let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
     let ident = format_ident!("{}", method.name());
 
     let (request, response) = method.request_response_name(context);
@@ -183,7 +183,7 @@ fn generate_streaming<'a, T: Method<'a>>(
             request: impl tonic::IntoStreamingRequest<Message = #request>
         ) -> Result<tonic::Response<tonic::codec::Streaming<#response>>, tonic::Status> {
            self.ready().await?;
-           let codec = tonic::codec::#codec_name::default();
+           let codec = #codec_name::default();
            let path = http::uri::PathAndQuery::from_static(#path);
            self.inner.streaming(request.into_streaming_request(), path, codec).await
         }

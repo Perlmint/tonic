@@ -231,7 +231,7 @@ fn generate_unary<'a, T: Method<'a>>(
     context: &T::Context,
     server_trait: Ident,
 ) -> TokenStream {
-    let codec_name = format_ident!("{}", T::Context::CODEC_NAME);
+    let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
 
     let service_ident = quote::format_ident!("{}Svc", method.identifier());
 
@@ -256,7 +256,7 @@ fn generate_unary<'a, T: Method<'a>>(
         let inner = self.inner.clone();
         let fut = async move {
             let method = #service_ident(inner);
-            let codec = tonic::codec::#codec_name::default();
+            let codec = #codec_name::default();
             let mut grpc = tonic::server::Grpc::new(codec);
             let res = grpc.unary(method, req).await;
             Ok(res)
@@ -272,7 +272,7 @@ fn generate_server_streaming<'a, T: Method<'a>>(
     context: &T::Context,
     server_trait: Ident,
 ) -> TokenStream {
-    let codec_name = format_ident!("{}", T::Context::CODEC_NAME);
+    let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
 
     let service_ident = quote::format_ident!("{}Svc", method.identifier());
 
@@ -301,7 +301,7 @@ fn generate_server_streaming<'a, T: Method<'a>>(
         let inner = self.inner.clone();
         let fut = async move {
             let method = #service_ident(inner);
-            let codec = tonic::codec::#codec_name::default();
+            let codec = #codec_name::default();
             let mut grpc = tonic::server::Grpc::new(codec);
             let res = grpc.server_streaming(method, req).await;
             Ok(res)
@@ -320,7 +320,7 @@ fn generate_client_streaming<'a, T: Method<'a>>(
     let service_ident = quote::format_ident!("{}Svc", method.identifier());
 
     let (request, response) = method.request_response_name(context);
-    let codec_name = format_ident!("{}", T::Context::CODEC_NAME);
+    let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
 
     quote! {
         struct #service_ident<T: #server_trait >(pub Arc<T>);
@@ -343,7 +343,7 @@ fn generate_client_streaming<'a, T: Method<'a>>(
         let inner = self.inner.clone();
         let fut = async move {
             let method = #service_ident(inner);
-            let codec = tonic::codec::#codec_name::default();
+            let codec = #codec_name::default();
             let mut grpc = tonic::server::Grpc::new(codec);
             let res = grpc.client_streaming(method, req).await;
             Ok(res)
@@ -359,7 +359,7 @@ fn generate_streaming<'a, T: Method<'a>>(
     context: &T::Context,
     server_trait: Ident,
 ) -> TokenStream {
-    let codec_name = format_ident!("{}", T::Context::CODEC_NAME);
+    let codec_name = syn::parse_str::<syn::Path>(context.codec_name()).unwrap();
 
     let service_ident = quote::format_ident!("{}Svc", method.identifier());
 
@@ -388,7 +388,7 @@ fn generate_streaming<'a, T: Method<'a>>(
         let inner = self.inner.clone();
         let fut = async move {
             let method = #service_ident(inner);
-            let codec = tonic::codec::#codec_name::default();
+            let codec = #codec_name::default();
             let mut grpc = tonic::server::Grpc::new(codec);
             let res = grpc.streaming(method, req).await;
             Ok(res)
